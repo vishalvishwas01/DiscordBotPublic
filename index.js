@@ -1,12 +1,11 @@
 const {Client, GatewayIntentBits, Message} = require("discord.js");
 const dotenv = require("dotenv")
-const fetch = require("node-fetch");
 const express = require("express");
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
   res.send("Join my discord on https://discord.gg/QTf4nKyu");
@@ -15,6 +14,8 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Web server running on port ${PORT}`);
 });
+
+const fetch = global.fetch;
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 
@@ -58,7 +59,8 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.commandName === "create") {
     const url = interaction.options.getString("url");
 
-    await interaction.reply("Generating Short ID please wait...");
+    await interaction.deferReply();
+
 
     try {
       const res = await fetch(`${process.env.URL}url`, {
